@@ -1,6 +1,7 @@
 # gjob
 
-A lightweight distributed job framework in Go, equivalent in intent to the `xdmp-job` Java framework.
+A lightweight distributed job framework in Go: cron/event triggers, executor
+registry and execution receipts.
 
 > Status: **experimental scaffold** (v0.0.0-dev).
 
