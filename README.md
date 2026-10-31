@@ -1,3 +1,5 @@
+English | [简体中文](README.zh-CN.md)
+
 # gjob
 
 A lightweight distributed job framework in Go: cron/event triggers, executor
