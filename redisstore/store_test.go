@@ -11,6 +11,7 @@ import (
 
 	"github.com/maxid/gjob"
 	"github.com/maxid/gjob/redisstore"
+	"github.com/maxid/gns"
 )
 
 func newStore(t *testing.T) (*redisstore.Store, *miniredis.Miniredis) {
@@ -143,6 +144,28 @@ func TestRecoverExpired(t *testing.T) {
 	for _, receipt := range first {
 		if receipt.State != gjob.StateLost {
 			t.Fatalf("%s state = %s", receipt.ExecutionID, receipt.State)
+		}
+	}
+}
+
+func TestNamespacePrefixesReceiptsAndFencing(t *testing.T) {
+	server := miniredis.RunT(t)
+	client := goredis.NewClient(&goredis.Options{Addr: server.Addr()})
+	t.Cleanup(func() { _ = client.Close() })
+	store, err := redisstore.New(client, redisstore.WithNamespace(gns.Set{Cache: "app"}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, claimed, err := store.Claim(context.Background(), execution("e1"), time.Minute); err != nil || !claimed {
+		t.Fatalf("claim = %v, %v", claimed, err)
+	}
+	keys := map[string]bool{}
+	for _, key := range server.Keys() {
+		keys[key] = true
+	}
+	for _, want := range []string{"app:job:e1", "app:job:lease", "app:job:fencing"} {
+		if !keys[want] {
+			t.Fatalf("missing key %q in %v", want, server.Keys())
 		}
 	}
 }

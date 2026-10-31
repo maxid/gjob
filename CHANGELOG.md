@@ -4,4 +4,6 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- `redisstore.WithNamespace(gns.Set)` derives receipt and fencing keys; `WithPrefix` now moves fencing under the same prefix.
+
 - Initial scaffold.

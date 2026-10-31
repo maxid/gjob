@@ -41,6 +41,17 @@ go scheduler.Run(ctx)
 Both satisfy the same contract test: unique claim, fencing rejection, lease
 recovery.
 
+The Redis store keeps receipts under `gjob:receipt:` and the fencing counter at
+`gjob:fencing` by default. When several applications share Redis, derive both
+from a gns set instead:
+
+```go
+store, _ := redisstore.New(client, redisstore.WithNamespace(set))
+// app:job:<execution>, app:job:lease, app:job:fencing
+```
+
+`WithPrefix` remains the explicit low-level escape hatch.
+
 ## Install
 
 ```bash

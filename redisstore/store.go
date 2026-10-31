@@ -15,6 +15,7 @@ import (
 	goredis "github.com/redis/go-redis/v9"
 
 	"github.com/maxid/gjob"
+	"github.com/maxid/gns"
 )
 
 // claimScript stores the receipt only if the key is absent, returning 1 when it
@@ -68,12 +69,24 @@ type Store struct {
 // Option configures a Store.
 type Option func(*Store)
 
-// WithPrefix sets the key prefix.
+// WithPrefix sets the key prefix. It also moves the fencing counter under the
+// same prefix so two applications sharing Redis cannot mix receipt namespaces.
 func WithPrefix(prefix string) Option {
 	return func(s *Store) {
 		if prefix != "" {
 			s.prefix = prefix
+			s.fence = prefix + "fencing"
 		}
+	}
+}
+
+// WithNamespace derives the receipt and fencing keys from a gns set:
+// "<cache>:job:<execution>" and "<cache>:job:fencing". It is the explicit
+// alternative to WithPrefix for applications that share Redis.
+func WithNamespace(set gns.Set) Option {
+	return func(s *Store) {
+		s.prefix = set.RedisKey("job") + ":"
+		s.fence = set.RedisKey("job", "fencing")
 	}
 }
 
