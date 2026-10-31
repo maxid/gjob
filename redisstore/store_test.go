@@ -11,7 +11,6 @@ import (
 
 	"github.com/maxid/gjob"
 	"github.com/maxid/gjob/redisstore"
-	"github.com/maxid/gns"
 )
 
 func newStore(t *testing.T) (*redisstore.Store, *miniredis.Miniredis) {
@@ -152,7 +151,7 @@ func TestNamespacePrefixesReceiptsAndFencing(t *testing.T) {
 	server := miniredis.RunT(t)
 	client := goredis.NewClient(&goredis.Options{Addr: server.Addr()})
 	t.Cleanup(func() { _ = client.Close() })
-	store, err := redisstore.New(client, redisstore.WithNamespace(gns.Set{Cache: "app"}))
+	store, err := redisstore.New(client, redisstore.WithNamespace("app"))
 	if err != nil {
 		t.Fatal(err)
 	}

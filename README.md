@@ -46,7 +46,7 @@ The Redis store keeps receipts under `gjob:receipt:` and the fencing counter at
 from a gns set instead:
 
 ```go
-store, _ := redisstore.New(client, redisstore.WithNamespace(set))
+store, _ := redisstore.New(client, redisstore.WithNamespace("app"))
 // app:job:<execution>, app:job:lease, app:job:fencing
 ```
 

@@ -18,7 +18,7 @@ Redis 回执默认使用 `gjob:receipt:`，fencing 计数器使用 `gjob:fencing
 多个应用共用 Redis 时，用 gns 派生两套 key：
 
 ```go
-store, _ := redisstore.New(client, redisstore.WithNamespace(set))
+store, _ := redisstore.New(client, redisstore.WithNamespace("app"))
 // app:job:<execution>、app:job:lease、app:job:fencing
 ```
 
