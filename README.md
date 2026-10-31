@@ -36,6 +36,7 @@ go scheduler.Run(ctx)
 |---|---|
 | `memory/` | contract reference and single-process deployments |
 | `redisstore/` | clusters: atomic claim (`SETNX` in Lua), fenced heartbeat/complete, sorted-set lease index for bounded recovery |
+| `mysqlstore/` | clusters: claim is an `INSERT` conflict, fencing checked on every write, `lease_until` index for bounded recovery |
 
 Both satisfy the same contract test: unique claim, fencing rejection, lease
 recovery.
